@@ -9,10 +9,10 @@
   <style>
     :root {
       --bg:          #080608;
-      --surface:     #0f0a0c;
-      --surface2:    #180b0f;
-      --border:      #2a1018;
-      --border-hi:   #4a1828;
+      --surface:     #201418;
+      --surface2:    #2c1c22;
+      --border:      #3a1e28;
+      --border-hi:   #562230;
       --accent:      #cc1428;
       --accent-hi:   #e8192e;
       --accent-glow: rgba(204,20,40,0.12);
@@ -130,7 +130,9 @@
     .hero-desc {
       font-size: 0.95rem; line-height: 1.8; color: var(--text);
       max-width: 500px; margin-bottom: 36px;
-      border-left: 2px solid var(--border-hi); padding-left: 20px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--border-hi);
+      padding: 18px 20px;
     }
     .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
     .btn {
@@ -196,7 +198,13 @@
     .sec-num { font-family: var(--font-mono); font-size: 0.62rem; color: var(--accent); letter-spacing: 0.1em; }
     .sec-head h2 { font-family: var(--font-disp); font-size: 1.5rem; color: var(--white); letter-spacing: 0.08em; }
 
-    .profile-text { font-size: 0.95rem; line-height: 1.85; color: var(--text); max-width: 760px; }
+    .profile-text {
+      font-size: 0.95rem; line-height: 1.85; color: var(--text);
+      max-width: 760px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--border-hi);
+      padding: 24px 28px;
+    }
 
     .exp-list { display: flex; flex-direction: column; gap: 2px; }
     .exp-item {
@@ -330,12 +338,21 @@
       <div class="section">
         <div class="sec-head"><span class="sec-num">01</span><h2>Profile</h2></div>
         <p class="profile-text">
-          Pursuing Applied Data Science & AI at Breda University of Applied Sciences, where I combine technical
-          expertise with practical research applications. As a 3D artist with around a thousand hours of practice,
-          I bring creative problem-solving alongside strong capabilities in machine learning, data engineering,
-          and signal analysis. My work spans deep learning pipelines to complex physiological data processing —
-          from ConvLSTM architectures for plant root segmentation to EDA artifact detection in cycling safety studies.
-          I adapt quickly across technical, creative, and research environments, and I care about building things that actually work.
+          Pursuing Applied Data Science & AI at Breda University of Applied Sciences, with a focus on applied
+          research at the intersection of machine learning and the physical world. Currently a paid research
+          assistant at the Places and Flows lab, using skin-conductance measurements and field observations
+          to construct spatially-grounded landscape representations through ML.
+          <br><br>
+          My technical background spans the breadth of modern ML: convolutional networks for image classification
+          and segmentation (including temporal architectures like ConvLSTM), recurrent models for time-series
+          and stock analysis, standard supervised and unsupervised algorithms, and NLP with transformer-based
+          models. I have hands-on experience cleaning and validating scientific datasets — including EDA/physiological
+          signal artifact detection — and building the full pipeline from raw data to reproducible results.
+          <br><br>
+          Alongside data science, I bring around a thousand hours of hard-surface 3D modelling in Blender
+          and a background in applied research coordination, including participant recruitment, field data
+          collection, and cross-organisational collaboration. I adapt quickly, care about rigour, and build
+          things that hold up under scrutiny.
         </p>
       </div>
 
