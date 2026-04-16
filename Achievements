@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lars Peggeman — Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:          #080608;
+      --surface:     #201418;
+      --surface2:    #2c1c22;
+      --border:      #3a1e28;
+      --border-hi:   #562230;
+      --accent:      #cc1428;
+      --accent-hi:   #e8192e;
+      --accent-glow: rgba(204,20,40,0.12);
+      --white:       #f0e8ea;
+      --text:        #c0aaae;
+      --text-dim:    #5a3840;
+      --font-disp:   'Bebas Neue', sans-serif;
+      --font-mono:   'IBM Plex Mono', monospace;
+      --font-body:   'IBM Plex Sans', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(204,20,40,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(204,20,40,0.04) 1px, transparent 1px);
+      background-size: 48px 48px; pointer-events: none; z-index: 0;
+    }
+    body::after {
+      content: ''; position: fixed; inset: 0;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        transparent 0px, transparent 38px,
+        rgba(255,255,255,0.028) 38px, rgba(255,255,255,0.028) 39px
+      );
+      pointer-events: none; z-index: 0;
+    }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(8,6,8,0.94); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      height: 58px; display: flex; align-items: center;
+      justify-content: space-between; padding: 0 48px;
+    }
+    .nav-brand { font-family: var(--font-disp); font-size: 1.4rem; color: var(--white); text-decoration: none; letter-spacing: 0.08em; }
+    .nav-brand span { color: var(--accent); }
+    .nav-links { display: flex; gap: 4px; }
+    .nav-links a {
+      font-family: var(--font-mono); font-size: 0.72rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-dim); text-decoration: none;
+      padding: 6px 16px; border: 1px solid transparent; transition: all 0.18s;
+    }
+    .nav-links a:hover { color: var(--white); border-color: var(--border-hi); background: var(--accent-glow); }
+    .nav-links a.active { color: var(--accent); border-color: var(--accent); }
+
+    .page-header {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 56px 48px 0;
+    }
+    .page-eyebrow {
+      font-family: var(--font-mono); font-size: 0.68rem;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 10px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .page-eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--accent); }
+    .page-title {
+      font-family: var(--font-disp); font-size: clamp(2.8rem, 6vw, 5rem);
+      color: var(--white); letter-spacing: 0.04em; line-height: 1;
+      margin-bottom: 36px;
+    }
+
+    /* TABS */
+    .tabs-bar {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 48px;
+      border-bottom: 1px solid var(--border);
+      display: flex; overflow-x: auto;
+    }
+    .tab-btn {
+      font-family: var(--font-mono); font-size: 0.72rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-dim); background: none;
+      border: none; border-bottom: 2px solid transparent;
+      padding: 14px 22px; cursor: pointer;
+      transition: all 0.18s; white-space: nowrap;
+      margin-bottom: -1px;
+    }
+    .tab-btn:hover { color: var(--white); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .content {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 48px 48px 80px;
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; animation: fadeUp 0.3s ease both; }
+
+    /* EMPTY STATE */
+    .empty-state {
+      border: 1px dashed var(--border-hi);
+      padding: 56px 32px; text-align: center;
+    }
+    .empty-state-icon {
+      font-family: var(--font-disp); font-size: 2.5rem;
+      color: var(--border-hi); margin-bottom: 12px;
+    }
+    .empty-state p {
+      font-family: var(--font-mono); font-size: 0.7rem;
+      letter-spacing: 0.14em; color: var(--text-dim); text-transform: uppercase;
+    }
+
+    /* RENDER / PROJECT CARDS */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+      gap: 2px; margin-bottom: 2px;
+    }
+    .render-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-top: 2px solid var(--border);
+      overflow: hidden; display: flex; flex-direction: column;
+      transition: border-top-color 0.2s;
+    }
+    .render-card:hover { border-top-color: var(--accent); }
+    .render-card:hover .render-img img { transform: scale(1.03); filter: brightness(1) saturate(1); }
+    .render-img {
+      width: 100%; height: 260px; overflow: hidden;
+      background: var(--surface2); border-bottom: 1px solid var(--border);
+    }
+    .render-img img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s ease, filter 0.3s;
+      filter: brightness(0.85) saturate(0.85);
+    }
+    .render-body { padding: 24px 28px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+    .render-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .render-tag {
+      font-family: var(--font-mono); font-size: 0.62rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); background: var(--accent-glow);
+      border: 1px solid var(--border-hi); padding: 2px 9px;
+    }
+    .render-title {
+      font-family: var(--font-disp); font-size: 1.5rem;
+      color: var(--white); letter-spacing: 0.05em; line-height: 1.1;
+    }
+    .render-story { font-size: 0.88rem; color: var(--text-dim); line-height: 1.78; flex: 1; }
+    .render-footer {
+      padding: 14px 28px; border-top: 1px solid var(--border);
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .render-link {
+      font-family: var(--font-mono); font-size: 0.68rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-dim); text-decoration: none;
+      border: 1px solid var(--border); padding: 6px 14px;
+      transition: all 0.18s; display: inline-block;
+    }
+    .render-link:hover { color: var(--white); border-color: var(--accent); background: var(--accent-glow); }
+
+    /* PHOTO GALLERY */
+    .photo-grid { columns: 3; column-gap: 4px; }
+    .photo-item {
+      break-inside: avoid; margin-bottom: 4px;
+      overflow: hidden; border: 1px solid var(--border);
+      position: relative; cursor: pointer;
+    }
+    .photo-item img {
+      display: block; width: 100%;
+      filter: brightness(0.88) saturate(0.85);
+      transition: filter 0.3s, transform 0.4s;
+    }
+    .photo-item:hover img { filter: brightness(1) saturate(1); transform: scale(1.02); }
+    .photo-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(8,6,8,0.75) 0%, transparent 55%);
+      opacity: 0; transition: opacity 0.3s;
+      display: flex; align-items: flex-end; padding: 12px 14px;
+    }
+    .photo-item:hover .photo-overlay { opacity: 1; }
+    .photo-caption { font-family: var(--font-mono); font-size: 0.64rem; color: var(--white); letter-spacing: 0.08em; }
+
+    /* GRADES */
+    .grades-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 2px;
+    }
+    .grade-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--border); padding: 22px 26px;
+      transition: border-left-color 0.2s;
+    }
+    .grade-card:hover { border-left-color: var(--accent); }
+    .grade-period {
+      font-family: var(--font-mono); font-size: 0.62rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-dim); margin-bottom: 6px;
+    }
+    .grade-title { font-size: 0.9rem; font-weight: 600; color: var(--white); margin-bottom: 14px; line-height: 1.3; }
+    .grade-num { font-family: var(--font-disp); font-size: 2.8rem; color: var(--white); line-height: 1; }
+    .grade-num span { color: var(--accent); }
+    .grade-num.pending { font-size: 1.6rem; color: var(--text-dim); }
+
+    /* ACHIEVEMENTS */
+    .ach-list { display: flex; flex-direction: column; gap: 2px; }
+    .ach-item {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--border); padding: 22px 28px;
+      transition: border-left-color 0.2s;
+    }
+    .ach-item:hover { border-left-color: var(--accent); }
+    .ach-top {
+      display: flex; justify-content: space-between;
+      align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 6px;
+    }
+    .ach-title { font-size: 0.95rem; font-weight: 600; color: var(--white); line-height: 1.3; }
+    .ach-date { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-dim); white-space: nowrap; }
+    .ach-desc { font-size: 0.87rem; color: var(--text-dim); line-height: 1.7; }
+    .ach-images {
+      display: flex; overflow-x: auto; gap: 10px;
+      padding: 10px 0 2px; margin-top: 12px;
+    }
+    .ach-images img {
+      max-height: 160px; flex-shrink: 0;
+      border: 1px solid var(--border);
+      filter: brightness(0.88) saturate(0.85);
+    }
+
+    /* LIGHTBOX */
+    .lightbox {
+      display: none; position: fixed; inset: 0;
+      background: rgba(8,6,8,0.97); z-index: 999;
+      align-items: center; justify-content: center; padding: 24px;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; border: 1px solid var(--border); }
+    .lightbox-close {
+      position: absolute; top: 20px; right: 24px;
+      font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em;
+      color: var(--text-dim); cursor: pointer; background: none;
+      border: 1px solid var(--border); padding: 6px 14px; transition: all 0.18s;
+    }
+    .lightbox-close:hover { color: var(--white); border-color: var(--accent); }
+
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border); padding: 20px 48px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    footer span { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-dim); }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .page-eyebrow { animation: fadeUp 0.4s ease both 0.05s; }
+    .page-title   { animation: fadeUp 0.4s ease both 0.12s; }
+
+    @media (max-width: 820px) {
+      nav, .tabs-bar { padding-left: 20px; padding-right: 20px; }
+      .page-header { padding: 40px 24px 0; }
+      .content { padding: 32px 24px 60px; }
+      .card-grid { grid-template-columns: 1fr; }
+      .photo-grid { columns: 2; }
+      .grades-grid { grid-template-columns: 1fr 1fr; }
+      footer { padding: 18px 24px; flex-direction: column; gap: 6px; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .photo-grid { columns: 1; }
+      .grades-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-brand" href="index.html">LARS <span>P</span></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="achievements.html" class="active">Showcase</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+
+  <div style="position:relative;z-index:1;">
+
+    <div class="page-header">
+      <div class="page-eyebrow">Work &amp; Record</div>
+      <h1 class="page-title">Showcase</h1>
+    </div>
+
+    <div class="tabs-bar">
+      <button class="tab-btn active" onclick="switchTab('renders',      this)">Blender Renders</button>
+      <button class="tab-btn"        onclick="switchTab('photos',       this)">Photos</button>
+      <button class="tab-btn"        onclick="switchTab('grades',       this)">Grades</button>
+      <button class="tab-btn"        onclick="switchTab('projects',     this)">Projects</button>
+      <button class="tab-btn"        onclick="switchTab('achievements', this)">Achievements</button>
+    </div>
+
+    <div class="content">
+
+      <!-- ════════════════════════════════════════════════════
+           TAB: BLENDER RENDERS
+           To add a render, copy the template block below,
+           paste it inside .card-grid, and fill in the fields.
+           Remove the empty-state div once you have entries.
+      ════════════════════════════════════════════════════ -->
+      <div class="tab-panel active" id="tab-renders">
+        <div class="card-grid">
+
+          <!--
+          RENDER TEMPLATE ─ copy from here ↓
+          <div class="render-card">
+            <div class="render-img">
+              <img src="Images/YOUR_RENDER.jpg" alt="Render title" />
+            </div>
+            <div class="render-body">
+              <div class="render-tags">
+                <span class="render-tag">Hard Surface</span>
+                <span class="render-tag">Cycles</span>
+              </div>
+              <div class="render-title">Render Title</div>
+              <p class="render-story">
+                What was the concept? What techniques or materials did you explore?
+                What did you learn or want to achieve with this piece?
+              </p>
+            </div>
+          </div>
+          to here ↑
+          -->
+
+        </div>
+        <div class="empty-state">
+          <div class="empty-state-icon">[ ]</div>
+          <p>Renders coming soon</p>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════
+           TAB: PHOTOS
+           To add photos, copy the template block below
+           and paste it inside .photo-grid.
+      ════════════════════════════════════════════════════ -->
+      <div class="tab-panel" id="tab-photos">
+        <div class="photo-grid">
+
+          <div class="photo-item" onclick="openLightbox(this)">
+            <img src="Photography/Dauwrennen_2023.jpg" alt="Dauwrennen 2023" />
+            <div class="photo-overlay"><span class="photo-caption">Dauwrennen — 2023</span></div>
+          </div>
+          <div class="photo-item" onclick="openLightbox(this)">
+            <img src="Photography/IMG20250529064343.jpg" alt="Dauwrennen 2025" />
+            <div class="photo-overlay"><span class="photo-caption">Dauwrennen — May 2025</span></div>
+          </div>
+          <div class="photo-item" onclick="openLightbox(this)">
+            <img src="Photography/IMG20250529061656.jpg" alt="Dauwrennen 2025" />
+            <div class="photo-overlay"><span class="photo-caption">Dauwrennen — May 2025</span></div>
+          </div>
+          <div class="photo-item" onclick="openLightbox(this)">
+            <img src="Photography/IMG20250529062012.jpg" alt="Dauwrennen 2025" />
+            <div class="photo-overlay"><span class="photo-caption">Dauwrennen — May 2025</span></div>
+          </div>
+
+          <!--
+          PHOTO TEMPLATE ─ copy from here ↓
+          <div class="photo-item" onclick="openLightbox(this)">
+            <img src="Photography/YOUR_PHOTO.jpg" alt="Description" />
+            <div class="photo-overlay"><span class="photo-caption">Caption — Date</span></div>
+          </div>
+          to here ↑
+          -->
+
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════
+           TAB: GRADES
+      ════════════════════════════════════════════════════ -->
+      <div class="tab-panel" id="tab-grades">
+        <div class="grades-grid">
+
+          <div class="grade-card">
+            <div class="grade-period">Year 2 · Block A · Nov 2025</div>
+            <div class="grade-title">Block A — BUas ADSAI</div>
+            <div class="grade-num pending">TBD</div>
+          </div>
+          <div class="grade-card">
+            <div class="grade-period">Year 1 · Full Year · Jul 2025</div>
+            <div class="grade-title">Year 1 Graduation Average</div>
+            <div class="grade-num">8<span>.5/10</span></div>
+          </div>
+          <div class="grade-card">
+            <div class="grade-period">Year 1 · Block D · Jun 2025</div>
+            <div class="grade-title">Block D — BUas ADSAI</div>
+            <div class="grade-num">8<span>.9/10</span></div>
+          </div>
+          <div class="grade-card">
+            <div class="grade-period">Year 1 · Block C · Apr 2025</div>
+            <div class="grade-title">Block C — BUas ADSAI</div>
+            <div class="grade-num">8<span>.8/10</span></div>
+          </div>
+          <div class="grade-card">
+            <div class="grade-period">Year 1 · Block B · Jan 2025</div>
+            <div class="grade-title">Block B — BUas ADSAI</div>
+            <div class="grade-num">9<span>.5/10</span></div>
+          </div>
+          <div class="grade-card">
+            <div class="grade-period">Year 1 · Block A · Nov 2024</div>
+            <div class="grade-title">Block A — BUas ADSAI</div>
+            <div class="grade-num">7<span>.1/10</span></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════
+           TAB: PROJECTS
+           Same card system as Blender Renders, with a link
+           footer. To add a project, copy the template below,
+           paste inside .card-grid, and fill in the fields.
+           Remove the empty-state div once you have entries.
+      ════════════════════════════════════════════════════ -->
+      <div class="tab-panel" id="tab-projects">
+        <div class="card-grid">
+
+          <!--
+          PROJECT TEMPLATE ─ copy from here ↓
+          <div class="render-card">
+            <div class="render-img">
+              <img src="Images/YOUR_IMAGE.jpg" alt="Project name" />
+            </div>
+            <div class="render-body">
+              <div class="render-tags">
+                <span class="render-tag">Python</span>
+                <span class="render-tag">PyTorch</span>
+              </div>
+              <div class="render-title">Project Title</div>
+              <p class="render-story">
+                What problem did this solve? What was your approach,
+                what tools did you use, and what was the outcome?
+              </p>
+            </div>
+            <div class="render-footer">
+              <a class="render-link" href="https://github.com/..." target="_blank">GitHub</a>
+              <a class="render-link" href="https://..." target="_blank">Live Demo</a>
+            </div>
+          </div>
+          to here ↑
+          -->
+
+        </div>
+        <div class="empty-state">
+          <div class="empty-state-icon">[ ]</div>
+          <p>Projects coming soon</p>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════
+           TAB: ACHIEVEMENTS
+           To add an entry, copy the template below and
+           paste inside .ach-list.
+      ════════════════════════════════════════════════════ -->
+      <div class="tab-panel" id="tab-achievements">
+        <div class="ach-list">
+
+          <div class="ach-item">
+            <div class="ach-top">
+              <span class="ach-title">Propaedeutic Certificate Received</span>
+              <span class="ach-date">31 Oct 2025</span>
+            </div>
+            <p class="ach-desc">Awarded the propaedeutic certificate at BUas ADSAI, confirming successful completion of Year 1.</p>
+          </div>
+
+          <div class="ach-item">
+            <div class="ach-top">
+              <span class="ach-title">Year 1 Graduation — 8.5 avg</span>
+              <span class="ach-date">4 Jul 2025</span>
+            </div>
+            <p class="ach-desc">Successfully completed Year 1 of the BUas ADSAI programme with an average of 8.5/10.</p>
+          </div>
+
+          <div class="ach-item">
+            <div class="ach-top">
+              <span class="ach-title">Move Tickers Visualiser — Block D</span>
+              <span class="ach-date">Jun 2025</span>
+            </div>
+            <p class="ach-desc">Designed and developed a stock market prediction visualisation combining historical data with future LSTM model forecasts.</p>
+            <div class="ach-images">
+              <img src="Images/output.png" alt="Output visualisation" />
+            </div>
+          </div>
+
+          <div class="ach-item">
+            <div class="ach-top">
+              <span class="ach-title">Dauwrennen — Photos on Official Website</span>
+              <span class="ach-date">29 May 2025</span>
+            </div>
+            <p class="ach-desc">Multiple photos selected for the official Den Hout Dauwrennen event website.</p>
+            <div class="ach-images">
+              <img src="Photography/IMG20250529064343.jpg" alt="Dauwrennen 2025" />
+              <img src="Photography/IMG20250529061656.jpg" alt="Dauwrennen 2025" />
+              <img src="Photography/IMG20250529062012.jpg" alt="Dauwrennen 2025" />
+            </div>
+          </div>
+
+          <div class="ach-item">
+            <div class="ach-top">
+              <span class="ach-title">Event Photography Headline — Den Hout</span>
+              <span class="ach-date">18 May 2023</span>
+            </div>
+            <p class="ach-desc">A photo made the headline of the annual Den Hout Dauwrennen event website.</p>
+            <div class="ach-images">
+              <img src="Photography/Dauwrennen_2023.jpg" alt="Dauwrennen 2023" />
+            </div>
+          </div>
+
+          <!--
+          ACHIEVEMENT TEMPLATE ─ copy from here ↓
+          <div class="ach-item">
+            <div class="ach-top">
+              <span class="ach-title">Achievement Title</span>
+              <span class="ach-date">Month YYYY</span>
+            </div>
+            <p class="ach-desc">Description of the achievement.</p>
+          </div>
+          to here ↑
+          -->
+
+        </div>
+      </div>
+
+    </div>
+
+    <footer>
+      <span>© 2025 Lars Peggeman</span>
+      <span><a href="mailto:lasse.peggeman@gmail.com">lasse.peggeman@gmail.com</a></span>
+    </footer>
+  </div>
+
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">[ close ]</button>
+    <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()" />
+  </div>
+
+  <script>
+    function switchTab(id, btn) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + id).classList.add('active');
+      btn.classList.add('active');
+    }
+    function openLightbox(item) {
+      document.getElementById('lightbox-img').src = item.querySelector('img').src;
+      document.getElementById('lightbox-img').alt = item.querySelector('img').alt;
+      document.getElementById('lightbox').classList.add('open');
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+  </script>
+
+</body>
+</html>
